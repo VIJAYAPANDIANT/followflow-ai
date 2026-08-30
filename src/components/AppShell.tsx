@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   Bell,
   Brain,
@@ -14,11 +14,24 @@ import {
   Wand2,
   X,
   Zap,
+  ShieldCheck,
+  ArrowRight,
+  Flame,
+  AlertTriangle,
 } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Avatar } from "@/components/PriorityBadge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -108,6 +121,17 @@ function SidebarBody({
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate({ to: "/leads", search: { q: searchQuery.trim() } });
+    } else {
+      navigate({ to: "/leads" });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -168,32 +192,126 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <Menu className="size-4" />
             </button>
 
-            <div className="relative w-full max-w-md">
+            <form onSubmit={handleSearchSubmit} className="relative w-full max-w-md">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search leads, companies, follow-ups..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-10 rounded-xl border-border bg-secondary/60 pl-9 text-sm shadow-none focus-visible:bg-card"
               />
-            </div>
+            </form>
 
             <div className="ml-auto flex items-center gap-2 sm:gap-3">
-              <span className="hidden items-center gap-2 rounded-full border border-success/25 bg-success/10 px-3 py-1.5 text-xs font-semibold text-success sm:inline-flex">
+              <button
+                onClick={() => toast.success("FollowFlow AI Engine: Online & Active (Gemini 3.7 Flash)")}
+                className="hidden items-center gap-2 rounded-full border border-success/25 bg-success/10 px-3 py-1.5 text-xs font-semibold text-success sm:inline-flex hover:bg-success/20 transition-all cursor-pointer"
+              >
                 <span className="relative flex size-2">
                   <span className="absolute inline-flex size-2 animate-ping rounded-full bg-success/70" />
                   <span className="relative inline-flex size-2 rounded-full bg-success" />
                 </span>
                 AI Active
-              </span>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Notifications"
-                className="relative rounded-xl border border-border"
-              >
-                <Bell className="size-4" />
-                <span className="absolute right-2 top-2 size-1.5 rounded-full bg-critical" />
-              </Button>
-              <Avatar name="Vijayapandian T" fallback="VJ" size="sm" />
+              </button>
+
+              {/* Notification Bell Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Notifications"
+                    className="relative rounded-xl border border-border cursor-pointer hover:bg-secondary"
+                  >
+                    <Bell className="size-4" />
+                    <span className="absolute right-2 top-2 size-1.5 rounded-full bg-critical" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-80 rounded-xl p-2 shadow-lg">
+                  <DropdownMenuLabel className="text-xs font-bold text-foreground px-2 py-1.5">
+                    AI Intelligence Alerts
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="flex flex-col items-start gap-1 p-2.5 rounded-lg cursor-pointer"
+                    onClick={() => navigate({ to: "/leads" })}
+                  >
+                    <span className="text-xs font-semibold flex items-center gap-1.5 text-critical">
+                      <Flame className="size-3.5 text-critical" /> Sarah Johnson (Acme Corp)
+                    </span>
+                    <span className="text-[11px] text-muted-foreground">
+                      Critical follow-up due. Requested Enterprise Plan pricing.
+                    </span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="flex flex-col items-start gap-1 p-2.5 rounded-lg cursor-pointer"
+                    onClick={() => navigate({ to: "/leads" })}
+                  >
+                    <span className="text-xs font-semibold flex items-center gap-1.5 text-primary">
+                      <Sparkles className="size-3.5 text-primary" /> Michael Chen (TechNova)
+                    </span>
+                    <span className="text-[11px] text-muted-foreground">
+                      Technical demo confirmed for Friday 10:00 AM.
+                    </span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="flex flex-col items-start gap-1 p-2.5 rounded-lg cursor-pointer"
+                    onClick={() => navigate({ to: "/leads" })}
+                  >
+                    <span className="text-xs font-semibold flex items-center gap-1.5 text-warning">
+                      <AlertTriangle className="size-3.5 text-warning" /> Emily Davis (BrightLabs)
+                    </span>
+                    <span className="text-[11px] text-muted-foreground">
+                      Cold risk flag: 4 days since previous interaction.
+                    </span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="justify-center text-xs font-semibold text-primary cursor-pointer py-2"
+                    onClick={() => navigate({ to: "/follow-ups" })}
+                  >
+                    View All Follow-Ups <ArrowRight className="ml-1 size-3.5" />
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* User Profile Dropdown Menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="rounded-full focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer">
+                    <Avatar name="Vijayapandian T" fallback="VJ" size="sm" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 rounded-xl p-2 shadow-lg">
+                  <DropdownMenuLabel className="p-2">
+                    <p className="text-xs font-semibold text-foreground">Vijayapandian T</p>
+                    <p className="text-[11px] text-muted-foreground">Sales Manager • FollowFlow AI</p>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate({ to: "/" })} className="cursor-pointer">
+                    <LayoutDashboard className="mr-2 size-4 text-primary" /> Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate({ to: "/follow-ups" })} className="cursor-pointer">
+                    <ListChecks className="mr-2 size-4 text-primary" /> Follow-ups Queue
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate({ to: "/leads" })} className="cursor-pointer">
+                    <Users className="mr-2 size-4 text-primary" /> Leads Directory
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate({ to: "/analyzer" })} className="cursor-pointer">
+                    <Wand2 className="mr-2 size-4 text-primary" /> AI Analyzer
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate({ to: "/generator" })} className="cursor-pointer">
+                    <Sparkles className="mr-2 size-4 text-primary" /> AI Generator
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate({ to: "/insights" })} className="cursor-pointer">
+                    <Brain className="mr-2 size-4 text-primary" /> AI Insights
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate({ to: "/settings" })} className="cursor-pointer">
+                    <Settings className="mr-2 size-4 text-muted-foreground" /> Settings & Config
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </header>
