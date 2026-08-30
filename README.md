@@ -25,32 +25,41 @@ FollowFlow AI automates this workflow end-to-end. Powered by **Google Gemini 3.7
 
 ```mermaid
 flowchart TD
-    A[Unstructured Sales Text / Notes / Email] -->|Ingestion| B[AI Conversation Analyzer]
-    B -->|Gemini 3.7 Flash AI Parsing| C[Structured Intelligence Extraction]
+    A["Unstructured Sales Text / Notes / Email"] -->|Ingestion| B["AI Conversation Analyzer"]
+    B -->|Gemini 3.7 Flash AI Parsing| C["Structured Intelligence Extraction"]
     
-    subgraph Data Extraction Pipeline
-        C --> D[Identify Lead & Company Metadata]
-        C --> E[Extract Intent & Commercial Urgency]
-        C --> F[Detect Pain Points & Objections]
-        C --> G[Detect Purchase Buying Signals]
+    subgraph DataPipeline["Data Extraction Pipeline"]
+        D["Identify Lead & Company Metadata"]
+        E["Extract Intent & Commercial Urgency"]
+        F["Detect Pain Points & Objections"]
+        G["Detect Purchase Buying Signals"]
     end
     
-    Data Extraction Pipeline --> H[Dynamic Priority Scoring Engine 0-100]
-    H --> I[Priority Tier Classification]
+    C --> D
+    C --> E
+    C --> F
+    C --> G
     
-    I -->|Score 90-100| J1[Critical Priority]
-    I -->|Score 75-89| J2[High Priority]
-    I -->|Score 50-74| J3[Medium Priority]
-    I -->|Score 0-49| J4[Low Priority]
+    DataPipeline --> H["Dynamic Priority Scoring Engine 0-100"]
+    H --> I["Priority Tier Classification"]
     
-    Priority Tier Classification --> K[AI Follow-Up Queue & Action Engine]
-    K --> L[Multi-Channel Message Generator]
+    I -->|Score 90-100| J1["Critical Priority"]
+    I -->|Score 75-89| J2["High Priority"]
+    I -->|Score 50-74| J3["Medium Priority"]
+    I -->|Score 0-49| J4["Low Priority"]
     
-    L -->|Email| M1[Subject + Structured Body]
-    L -->|LinkedIn| M2[Direct InMail Copy]
-    L -->|WhatsApp| M3[Mobile Chat Copy]
+    J1 --> K["AI Follow-Up Queue & Action Engine"]
+    J2 --> K
+    J3 --> K
+    J4 --> K
     
-    M1 --> N[Sales Representative Sends & Closes Deal]
+    K --> L["Multi-Channel Message Generator"]
+    
+    L -->|Email| M1["Subject + Structured Body"]
+    L -->|LinkedIn| M2["Direct InMail Copy"]
+    L -->|WhatsApp| M3["Mobile Chat Copy"]
+    
+    M1 --> N["Sales Representative Contacts & Closes Deal"]
     M2 --> N
     M3 --> N
 ```
