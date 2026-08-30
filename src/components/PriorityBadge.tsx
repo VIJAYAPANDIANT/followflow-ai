@@ -65,14 +65,17 @@ export function StatusPill({ status }: { status: string }) {
 
 export function Avatar({
   name,
+  fallback,
   size = "md",
   className,
 }: {
   name: string;
+  fallback?: string;
   size?: "sm" | "md" | "lg";
   className?: string;
 }) {
   const dims = size === "sm" ? "size-8 text-xs" : size === "lg" ? "size-14 text-lg" : "size-10 text-sm";
+  const initials = fallback || name.split(" ").map((p) => p[0]).slice(0, 2).join("");
   return (
     <span
       className={cn(
@@ -81,11 +84,7 @@ export function Avatar({
         className,
       )}
     >
-      {name
-        .split(" ")
-        .map((p) => p[0])
-        .slice(0, 2)
-        .join("")}
+      {initials}
     </span>
   );
 }

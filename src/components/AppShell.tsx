@@ -92,10 +92,10 @@ function SidebarBody({
             collapsed && "justify-center bg-transparent p-0",
           )}
         >
-          <Avatar name="Alex Morgan" size={collapsed ? "sm" : "md"} />
+          <Avatar name="Vijayapandian T" fallback="VJ" size={collapsed ? "sm" : "md"} />
           {!collapsed && (
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold">Alex Morgan</p>
+              <p className="truncate text-sm font-semibold">Vijayapandian T</p>
               <p className="truncate text-xs text-muted-foreground">Sales Manager</p>
             </div>
           )}
@@ -193,7 +193,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <Bell className="size-4" />
                 <span className="absolute right-2 top-2 size-1.5 rounded-full bg-critical" />
               </Button>
-              <Avatar name="Alex Morgan" size="sm" />
+              <Avatar name="Vijayapandian T" fallback="VJ" size="sm" />
             </div>
           </div>
         </header>

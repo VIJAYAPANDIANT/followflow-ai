@@ -43,7 +43,7 @@ function SettingsPage() {
               <input
                 type="text"
                 readOnly
-                value="Alex Morgan"
+                value="Vijayapandian T"
                 className="w-full rounded-xl border border-border bg-secondary/40 px-3.5 py-2 text-sm text-foreground font-medium"
               />
             </div>

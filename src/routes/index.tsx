@@ -99,7 +99,7 @@ function Dashboard() {
               <Sparkles className="size-3.5" /> AI ranked your day
             </span>
             <h1 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-              Good morning, Alex 👋
+              Good morning, Vijayapandian 👋
             </h1>
             <p className="mt-2 text-sm text-muted-foreground sm:text-base">
               Here's what needs your attention today.
