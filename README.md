@@ -129,6 +129,7 @@ Detect Intent, Pain Points, Objections & Buying Signals
 
 Detailed documentation is available in the `docs/` folder:
 
+- [Concept for Overall Website (Tamil & English)](docs/CONCEPT_FOR_OVERALL_WEBSITE.md)
 - [Project Overview](docs/PROJECT_OVERVIEW.md)
 - [Problem Statement](docs/PROBLEM_STATEMENT.md)
 - [Solution Specification](docs/SOLUTION.md)
