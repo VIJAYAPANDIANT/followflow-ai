@@ -6,7 +6,7 @@
 [![React 19](https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript 5.8](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![TanStack Start](https://img.shields.io/badge/TanStack-Start_v1-FF4154?style=for-the-badge&logo=tanstack&logoColor=white)](https://tanstack.com/start)
-[![Gemini AI Engine](https://img.shields.io/badge/Google_Gemini-2.5_Flash-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
+[![Gemini AI Engine](https://img.shields.io/badge/Google_Gemini-3.7_Flash-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4.0-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![AI Hackathon 2026](https://img.shields.io/badge/AI_Product_Hackathon-2026-FF4500?style=for-the-badge)](#-hackathon-context)
 
@@ -47,6 +47,7 @@ flowchart TD
     end
 
     subgraph External ["External AI APIs"]
+        G37["Gemini 3.7 Flash (Primary)"]
         G25["Gemini 2.5 Flash"]
         G20["Gemini 2.0 Flash"]
         G15["Gemini 1.5 Flash"]
@@ -60,7 +61,8 @@ flowchart TD
     Validator --> AiEngine
     AiEngine --> Env
     AiEngine --> Failover
-    Failover --> G25
+    Failover --> G37
+    Failover -. "Fallback" .-> G25
     Failover -. "Fallback" .-> G20
     Failover -. "Fallback" .-> G15
 ```
@@ -68,7 +70,7 @@ flowchart TD
 ### Architectural Highlights
 
 1. **Zero-Trust Token Encapsulation**: All interactions with the Gemini API occur inside server functions (`createServerFn` defined in [`src/lib/ai-functions.ts`](file:///c:/followflow%20ai/src/lib/ai-functions.ts)). The `GEMINI_API_KEY` environment variable is never shipped to client JavaScript bundles.
-2. **Resilient Multi-Model Failover**: The server AI engine automatically attempts request execution across a prioritized array of Gemini models (`gemini-2.5-flash` → `gemini-2.0-flash` → `gemini-1.5-flash`), guaranteeing service availability during regional API rate limits or maintenance windows.
+2. **Resilient Multi-Model Failover**: The server AI engine automatically attempts request execution across a prioritized array of Gemini models (`gemini-3.7-flash` → `gemini-2.5-flash` → `gemini-2.0-flash` → `gemini-1.5-flash`), guaranteeing service availability during regional API rate limits or maintenance windows.
 3. **Isomorphic Hydration & Offline Persistence**: State management ([`src/lib/app-store.tsx`](file:///c:/followflow%20ai/src/lib/app-store.tsx)) seamlessly reconciles initial SSR data with browser `localStorage`, ensuring complete offline functionality and instant state recovery across page reloads during live executive demonstrations.
 
 ---
