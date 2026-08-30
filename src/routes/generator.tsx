@@ -72,6 +72,7 @@ function GeneratorPage() {
 
   const [channel, setChannel] = useState<(typeof CHANNELS)[number]>("Email");
   const [tone, setTone] = useState<(typeof TONES)[number]>("Professional");
+  const [customInstruction, setCustomInstruction] = useState("");
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedSubject, setGeneratedSubject] = useState("");
@@ -119,6 +120,7 @@ function GeneratorPage() {
         nextBestAction: target.nextAction || "Schedule a follow-up call",
         channel,
         tone,
+        customInstruction: customInstruction.trim() || undefined,
       };
 
       let result;
@@ -145,6 +147,7 @@ function GeneratorPage() {
           nextBestAction: target.nextAction || "Schedule a call",
           channel,
           tone,
+          customInstruction: customInstruction.trim() || undefined,
         });
         setGeneratedSubject(fallback.subject || "");
         setGeneratedBody(fallback.body);
@@ -215,15 +218,29 @@ function GeneratorPage() {
                   <PriorityBadge priority={currentLead.priority} />
                 </div>
                 <p className="text-muted-foreground">{currentLead.company} • {currentLead.role || "Prospect"}</p>
-                <div className="border-t border-border/60 pt-2 space-y-1">
+                <div className="border-t border-border/60 pt-2 space-y-1.5">
                   <p>
                     <span className="text-muted-foreground">Intent:</span>{" "}
                     <span className="font-medium text-foreground">{currentLead.intent}</span>
                   </p>
                   <p>
-                    <span className="text-muted-foreground">Recommended Action:</span>{" "}
+                    <span className="text-muted-foreground">Action Needed:</span>{" "}
                     <span className="font-medium text-primary">{currentLead.nextAction}</span>
                   </p>
+                  {currentLead.objections && (
+                    <p className="text-muted-foreground">
+                      <span className="font-medium text-warning">Objection: </span>
+                      {currentLead.objections}
+                    </p>
+                  )}
+                  {currentLead.timeline && currentLead.timeline.length > 0 && (
+                    <div className="border-t border-border/40 pt-2 space-y-0.5">
+                      <p className="text-[11px] font-semibold text-foreground">Related Previous Interaction:</p>
+                      <p className="text-[11px] text-muted-foreground line-clamp-2 italic">
+                        "{currentLead.timeline[0].title}: {currentLead.timeline[0].detail}"
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -277,6 +294,19 @@ function GeneratorPage() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1.5 flex items-center justify-between">
+                <span>Additional Instructions / Notes</span>
+                <span className="text-[10px] text-primary font-normal">Optional</span>
+              </label>
+              <Textarea
+                placeholder="e.g. Offer 10% discount for signing this week, or mention availability for Thursday 2 PM call..."
+                value={customInstruction}
+                onChange={(e) => setCustomInstruction(e.target.value)}
+                className="min-h-[75px] resize-y text-xs rounded-xl bg-secondary/40 focus-visible:bg-card"
+              />
             </div>
 
             <Button

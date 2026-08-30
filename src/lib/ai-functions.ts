@@ -26,6 +26,7 @@ export type GenerateMessageInput = {
   nextBestAction: string;
   channel: "Email" | "LinkedIn Message" | "WhatsApp Message";
   tone: "Professional" | "Friendly" | "Concise" | "Persuasive";
+  customInstruction?: string;
 };
 
 export type GeneratedMessageResult = {
@@ -357,7 +358,8 @@ Provide ONLY the message body. Do NOT include a Subject line.`;
 - Buying Signals: ${(data.buyingSignals || []).join(", ")}
 - Recommended Next Action: ${data.nextBestAction}
 - Communication Channel: ${data.channel}
-- Tone: ${data.tone}`;
+- Tone: ${data.tone}
+${data.customInstruction ? `- Special Instruction: ${data.customInstruction}` : ""}`;
 
       const text = await callGemini(userPrompt, systemPrompt);
       let trimmed = text.trim();
