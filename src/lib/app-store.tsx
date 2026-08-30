@@ -38,7 +38,10 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     if (typeof window !== "undefined") {
       try {
         const stored = localStorage.getItem(FOLLOW_UPS_KEY);
-        if (stored) return JSON.parse(stored);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
       } catch (e) {
         console.error("Failed to load followUps from localStorage:", e);
       }
@@ -50,7 +53,10 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     if (typeof window !== "undefined") {
       try {
         const stored = localStorage.getItem(LEADS_KEY);
-        if (stored) return JSON.parse(stored);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
       } catch (e) {
         console.error("Failed to load leads from localStorage:", e);
       }

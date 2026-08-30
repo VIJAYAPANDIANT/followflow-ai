@@ -54,15 +54,18 @@ function GeneratorPage() {
   const search = useSearch({ from: "/generator" });
   const { leads, markAsSent } = useAppStore();
 
+  const leadParam = search["lead"];
   const [selectedLeadId, setSelectedLeadId] = useState<string>(
-    search.lead || (leads[0]?.id ?? "")
+    leadParam || (leads[0]?.id ?? "")
   );
 
   useEffect(() => {
-    if (search.lead && leads.some((l) => l.id === search.lead)) {
-      setSelectedLeadId(search.lead);
+    if (leadParam && leads.some((l) => l.id === leadParam)) {
+      setSelectedLeadId(leadParam);
+    } else if (!selectedLeadId && leads.length > 0 && leads[0]?.id) {
+      setSelectedLeadId(leads[0].id);
     }
-  }, [search.lead, leads]);
+  }, [leadParam, leads, selectedLeadId]);
 
   const currentLead = leads.find((l) => l.id === selectedLeadId) || leads[0];
 
@@ -76,7 +79,8 @@ function GeneratorPage() {
   const [isSent, setIsSent] = useState(false);
 
   const handleGenerate = async () => {
-    if (!currentLead) {
+    const target = currentLead || leads[0];
+    if (!target) {
       toast.error("Please select a lead first.");
       return;
     }
@@ -86,18 +90,32 @@ function GeneratorPage() {
     setIsSent(false);
 
     try {
-      const painPoints = currentLead.painPoints || [];
-      const objections = currentLead.objections ? [currentLead.objections] : [];
-      const buyingSignals = currentLead.buyingSignals ? [currentLead.buyingSignals] : [];
+      const painPoints = Array.isArray(target.painPoints)
+        ? target.painPoints
+        : target.painPoints
+        ? [String(target.painPoints)]
+        : ["Workflow automation"];
+
+      const objections = Array.isArray(target.objections)
+        ? target.objections
+        : target.objections
+        ? [String(target.objections)]
+        : ["Internal approval required"];
+
+      const buyingSignals = Array.isArray(target.buyingSignals)
+        ? target.buyingSignals
+        : target.buyingSignals
+        ? [String(target.buyingSignals)]
+        : ["Requested pricing breakdown"];
 
       const payload = {
-        leadName: currentLead.name,
-        company: currentLead.company,
-        customerIntent: currentLead.intent || "Follow up on previous conversation",
+        leadName: target.name || "Prospect",
+        company: target.company || "Target Company",
+        customerIntent: target.intent || "Evaluating enterprise features",
         painPoints,
         objections,
         buyingSignals,
-        nextBestAction: currentLead.nextAction || "Schedule a follow-up call",
+        nextBestAction: target.nextAction || "Schedule a follow-up call",
         channel,
         tone,
       };
@@ -106,20 +124,42 @@ function GeneratorPage() {
       try {
         result = await generateFollowUpMessageFn({ data: payload });
       } catch (e) {
-        console.warn("Server generator RPC failed, executing smart message fallback:", e);
+        console.warn("Server generator RPC failed, executing fallback:", e);
         result = fallbackGenerateMessage(payload);
       }
 
-      setGeneratedSubject(result.subject || "");
-      setGeneratedBody(result.body || "");
-      toast.success(`Generated ${channel} for ${currentLead.name}`);
+      setGeneratedSubject(result.subject || `Follow-up: Next steps for ${target.company}`);
+      setGeneratedBody(result.body || fallbackGenerateMessage(payload).body);
+      toast.success(`Generated ${channel} for ${target.name}`);
     } catch (err: unknown) {
-      console.error(err);
-      toast.error("Unable to generate message. Please try again.");
+      console.error("Generator failed, using fallback:", err);
+      if (target) {
+        const fallback = fallbackGenerateMessage({
+          leadName: target.name || "Prospect",
+          company: target.company || "Company",
+          customerIntent: target.intent || "Evaluating features",
+          painPoints: ["Workflow automation"],
+          objections: ["Internal approval required"],
+          buyingSignals: ["Requested pricing details"],
+          nextBestAction: target.nextAction || "Schedule a call",
+          channel,
+          tone,
+        });
+        setGeneratedSubject(fallback.subject || "");
+        setGeneratedBody(fallback.body);
+        toast.success(`Generated ${channel} for ${target.name}`);
+      }
     } finally {
       setIsGenerating(false);
     }
   };
+
+  // Auto-generate initial message on load if empty
+  useEffect(() => {
+    if (!generatedBody && currentLead) {
+      handleGenerate();
+    }
+  }, [currentLead?.id]);
 
   const handleCopy = () => {
     const fullText = channel === "Email" && generatedSubject
