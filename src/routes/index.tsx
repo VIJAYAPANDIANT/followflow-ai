@@ -87,8 +87,8 @@ function Dashboard() {
     .filter((f) => !f.completed)
     .sort((a, b) => b.score - a.score)
     .slice(0, 5);
-  const dueToday = followUps.filter((f) => !f.completed).length + 7;
-  const critical = followUps.filter((f) => !f.completed && f.priority === "Critical").length + 6;
+  const dueToday = followUps.filter((f) => !f.completed).length;
+  const critical = followUps.filter((f) => !f.completed && f.priority === "Critical").length;
 
   return (
     <div className="space-y-6">
