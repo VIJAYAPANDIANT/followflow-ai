@@ -272,7 +272,7 @@ function GeneratorPage() {
             {isGenerating ? (
               <div className="py-20 grid place-items-center text-center space-y-3">
                 <Loader2 className="size-8 animate-spin text-primary mx-auto" />
-                <p className="font-semibold text-base">Gemini is crafting a personalized follow-up...</p>
+                <p className="font-semibold text-base">Gemini 3.7 Flash is crafting a personalized follow-up...</p>
                 <p className="text-xs text-muted-foreground max-w-sm">
                   Incorporating intent, objections, pain points, and recommended actions.
                 </p>

@@ -133,7 +133,7 @@ function AnalyzerPage() {
 
             <div className="flex items-center justify-between pt-2">
               <p className="text-xs text-muted-foreground">
-                Powered by Gemini AI • Secure & Private
+                Powered by Gemini 3.7 Flash • Secure & Private
               </p>
               <Button
                 onClick={handleAnalyze}
