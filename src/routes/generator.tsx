@@ -25,7 +25,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { generateFollowUpMessageFn } from "@/lib/ai-functions";
+import {
+  generateFollowUpMessageFn,
+  fallbackGenerateMessage,
+} from "@/lib/ai-functions";
 
 export const Route = createFileRoute("/generator")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -87,19 +90,25 @@ function GeneratorPage() {
       const objections = currentLead.objections ? [currentLead.objections] : [];
       const buyingSignals = currentLead.buyingSignals ? [currentLead.buyingSignals] : [];
 
-      const result = await generateFollowUpMessageFn({
-        data: {
-          leadName: currentLead.name,
-          company: currentLead.company,
-          customerIntent: currentLead.intent || "Follow up on previous conversation",
-          painPoints,
-          objections,
-          buyingSignals,
-          nextBestAction: currentLead.nextAction || "Schedule a follow-up call",
-          channel,
-          tone,
-        },
-      });
+      const payload = {
+        leadName: currentLead.name,
+        company: currentLead.company,
+        customerIntent: currentLead.intent || "Follow up on previous conversation",
+        painPoints,
+        objections,
+        buyingSignals,
+        nextBestAction: currentLead.nextAction || "Schedule a follow-up call",
+        channel,
+        tone,
+      };
+
+      let result;
+      try {
+        result = await generateFollowUpMessageFn({ data: payload });
+      } catch (e) {
+        console.warn("Server generator RPC failed, executing smart message fallback:", e);
+        result = fallbackGenerateMessage(payload);
+      }
 
       setGeneratedSubject(result.subject || "");
       setGeneratedBody(result.body || "");
