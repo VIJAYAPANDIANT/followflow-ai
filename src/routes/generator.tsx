@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useAppStore } from "@/lib/app-store";
 import {
   generateFollowUpMessageFn,
   fallbackGenerateMessage,
