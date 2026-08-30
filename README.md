@@ -24,29 +24,26 @@ FollowFlow AI automates this workflow end-to-end. Powered by **Google Gemini 3.7
 ## 🏛️ System Architecture & Data Flow
 
 ```mermaid
-flowchart TD
-    A["Unstructured Sales Text / Notes / Email"] -->|Ingestion| B["AI Conversation Analyzer"]
-    B -->|Gemini 3.7 Flash AI Parsing| C["Structured Intelligence Extraction"]
+graph TD
+    A["Unstructured Sales Text / Notes / Email"] --> B["AI Conversation Analyzer"]
+    B --> C["Structured Intelligence Extraction"]
     
-    subgraph DataPipeline["Data Extraction Pipeline"]
-        D["Identify Lead & Company Metadata"]
-        E["Extract Intent & Commercial Urgency"]
-        F["Detect Pain Points & Objections"]
-        G["Detect Purchase Buying Signals"]
-    end
+    C --> D["Identify Lead & Company Metadata"]
+    C --> E["Extract Intent & Commercial Urgency"]
+    C --> F["Detect Pain Points & Objections"]
+    C --> G["Detect Purchase Buying Signals"]
     
-    C --> D
-    C --> E
-    C --> F
-    C --> G
+    D --> H["Dynamic Priority Scoring Engine (0-100)"]
+    E --> H
+    F --> H
+    G --> H
     
-    DataPipeline --> H["Dynamic Priority Scoring Engine 0-100"]
     H --> I["Priority Tier Classification"]
     
-    I -->|Score 90-100| J1["Critical Priority"]
-    I -->|Score 75-89| J2["High Priority"]
-    I -->|Score 50-74| J3["Medium Priority"]
-    I -->|Score 0-49| J4["Low Priority"]
+    I --> J1["Critical Priority (Score 90-100)"]
+    I --> J2["High Priority (Score 75-89)"]
+    I --> J3["Medium Priority (Score 50-74)"]
+    I --> J4["Low Priority (Score 0-49)"]
     
     J1 --> K["AI Follow-Up Queue & Action Engine"]
     J2 --> K
@@ -55,9 +52,9 @@ flowchart TD
     
     K --> L["Multi-Channel Message Generator"]
     
-    L -->|Email| M1["Subject + Structured Body"]
-    L -->|LinkedIn| M2["Direct InMail Copy"]
-    L -->|WhatsApp| M3["Mobile Chat Copy"]
+    L --> M1["Email Follow-Up"]
+    L --> M2["LinkedIn Message"]
+    L --> M3["WhatsApp Message"]
     
     M1 --> N["Sales Representative Contacts & Closes Deal"]
     M2 --> N
